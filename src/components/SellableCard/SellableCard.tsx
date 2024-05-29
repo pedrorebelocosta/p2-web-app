@@ -1,19 +1,27 @@
 'use client';
 
-export type ProductCardProps = {
-    id: number;
-    title: string;
-    price: string;
-    categoryName: string;
-    imagePath: string;
+export enum SellableType {
+    PRODUCT = 'product',
+    SERVICE = 'service'
 }
 
-export const ProductCard = ({ props }: { props: string }) => {
-    const { id, title, price, categoryName, imagePath } = JSON.parse(props);
+export type SellableCardProps = {
+    id: number;
+    type: SellableType;
+    title: string;
+    price: string;
+    categoryName?: string;
+    imagePath?: string;
+}
+
+export const SellableCard = ({ props }: { props: string }) => {
+    const { id, type, title, price, categoryName, imagePath } = JSON.parse(props);
     
     const onClickBuy = () => {
         // TODO add to cart, behavior when already in cart add +1
     }
+
+    console.log(type);
 
     return (
         <div className="max-w-sm rounded overflow-hidden shadow-lg">
@@ -23,7 +31,7 @@ export const ProductCard = ({ props }: { props: string }) => {
             </div>
             <div className="px-6 pt-4 pb-2">
                 Price: <div className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{price} EUR</div>
-                Category: <div className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{categoryName}</div>
+                { type === SellableType.PRODUCT && <>Category: <div className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">{categoryName}</div></> }
                 <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={onClickBuy}>Buy</button>
             </div>
         </div>

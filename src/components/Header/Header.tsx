@@ -2,12 +2,15 @@
 
 import classNames from "classnames";
 import Link from "next/link";
+import Image from 'next/image';
 import { usePathname } from "next/navigation"
 import { HEADER_CONFIG } from "./config";
 import { useUserInfo } from "@/hooks/useUserInfo";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+
+import styles from './styles.module.scss';
 
 export type HeaderNavigationItem = {
     title: string;
@@ -26,8 +29,7 @@ export const Header = () => {
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
                     <a href="#" className="-m-1.5 p-1.5">
-                        <span className="sr-only">Your Company</span>
-                        <img className="h-8 w-auto" src="logo.png" alt="" />
+                        <Image width={200} height={32} className="h-8 w-auto" src="/logo.png" alt="" />
                     </a>
                 </div>
                 <div className="flex lg:hidden">
@@ -48,10 +50,14 @@ export const Header = () => {
                     )}
                 </div>
                 <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-                <Link href="/cart">
-                                    <ShoppingCartIcon className="h-6 w-6 mr-2" />
-                                </Link>
-                    <Link href={isLoggedIn ? "/user/profile" : "/user/login"} className={classNames("text-sm font-semibold leading-6 text-gray-900", { "font-bold": currentPath.match("/user*") })}>{isLoggedIn ? "My Account" : "Login/Signup"} <span aria-hidden="true">&rarr;</span></Link>
+                    <Link href="/cart">
+                        <div className="flex flex-row-reverse">
+                            Cart <ShoppingCartIcon className="h-6 w-6 mr-2" />
+                        </div>
+                    </Link>
+                    <Link href={isLoggedIn ? "/user/profile" : "/user/login"} className={classNames("text-sm font-semibold leading-6 text-gray-900", { "font-bold": currentPath.match("/user*") })}>
+                        {isLoggedIn ? "My Account" : "Login/Signup"} <span aria-hidden="true">&rarr;</span>
+                    </Link>
                 </div>
             </nav>
             <Dialog className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
@@ -59,10 +65,11 @@ export const Header = () => {
                 <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                     <div className="flex items-center justify-between">
                         <a href="#" className="-m-1.5 p-1.5">
-                            <span className="sr-only">Your Company</span>
-                            <img
+                            <Image
                                 className="h-8 w-auto"
-                                src="logo.png"
+                                src="/logo.png"
+                                width={200}
+                                height={32}
                                 alt=""
                             />
                         </a>
@@ -71,7 +78,6 @@ export const Header = () => {
                             className="-m-2.5 rounded-md p-2.5 text-gray-700"
                             onClick={() => setMobileMenuOpen(false)}
                         >
-                            <span className="sr-only">Close menu</span>
                             <XMarkIcon className="h-6 w-6" aria-hidden="true" />
                         </button>
                     </div>
@@ -86,7 +92,9 @@ export const Header = () => {
                             </div>
                             <div className="py-6">
                                 <Link href="/cart">
-                                    <ShoppingCartIcon className="h-6 w-6 mr-2" />
+                                    <div className={"-mx-3 block rounded-lg px-3 py-2.5 text-base leading-7 text-gray-900 hover:bg-gray-50 flex"}>
+                                        Cart <ShoppingCartIcon className="h-6 w-6 mr-2" />
+                                    </div>
                                 </Link>
                                 <Link href={isLoggedIn ? "/user/profile" : "/user/login"} className={classNames("-mx-3 block rounded-lg px-3 py-2.5 text-base leading-7 text-gray-900 hover:bg-gray-50", { "font-bold": currentPath.match("/user*") })}>{isLoggedIn ? "My Account" : "Login/Signup"}</Link>
                             </div>

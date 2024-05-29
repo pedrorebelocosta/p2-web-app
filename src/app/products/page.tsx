@@ -1,5 +1,5 @@
-import { ProductCard } from "@/components/ProductCard";
-import { ProductCardProps } from "@/components/ProductCard/ProductCard";
+import { SellableCard, SellableType } from "@/components/SellableCard";
+import { SellableCardProps } from "@/components/SellableCard";
 
 import styles from './style.module.scss';
 
@@ -24,12 +24,13 @@ export default async function Products() {
 
     const productCards = products.map((product: Product) => ({
         ...product,
+        type: 'product',
         categoryName: categories.find((c: Category) => c.id === product.categoryId).title
-    }));
+    })) as SellableCardProps[];
 
     return (
         <div className={styles.ProductGrid}>
-            {productCards.map((product: ProductCardProps) => <ProductCard props={JSON.stringify(product)} key={product.id} />)}
+            {productCards.map((product) => <SellableCard props={JSON.stringify(product)} key={product.id} />)}
         </div>
     );
 }
