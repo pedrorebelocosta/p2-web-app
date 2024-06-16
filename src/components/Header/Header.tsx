@@ -5,12 +5,10 @@ import Link from "next/link";
 import Image from 'next/image';
 import { usePathname } from "next/navigation"
 import { HEADER_CONFIG } from "./config";
-import { useUserInfo } from "@/hooks/useUserInfo";
+import { useUserJwt } from "@/hooks/useUserJwt";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon, ShoppingCartIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
-
-import styles from './styles.module.scss';
 
 export type HeaderNavigationItem = {
     title: string;
@@ -21,16 +19,16 @@ export type HeaderNavigationItem = {
 export const Header = () => {
     const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false)
     const currentPath = usePathname();
-    const isLoggedIn = useUserInfo();
+    const {isLoggedIn} = useUserJwt();
     const items = HEADER_CONFIG;
 
     return (
         <header className="bg-white">
             <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
                 <div className="flex lg:flex-1">
-                    <a href="#" className="-m-1.5 p-1.5">
-                        <Image width={200} height={32} className="h-8 w-auto" src="/logo.png" alt="" />
-                    </a>
+                    <Link href="/" className="-m-1.5 p-1.5">
+                        <Image width={200} height={32} className="h-8 w-auto" src="/logo.png" alt="" priority />
+                    </Link>
                 </div>
                 <div className="flex lg:hidden">
                     <button
@@ -49,7 +47,7 @@ export const Header = () => {
                         })}>{title}</Link>
                     )}
                 </div>
-                <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+                <div className="hidden lg:flex lg:flex-1 lg:justify-end gap-2">
                     <Link href="/cart">
                         <div className="flex flex-row-reverse">
                             Cart <ShoppingCartIcon className="h-6 w-6 mr-2" />
@@ -64,7 +62,7 @@ export const Header = () => {
                 <div className="fixed inset-0 z-10" />
                 <Dialog.Panel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
                     <div className="flex items-center justify-between">
-                        <a href="#" className="-m-1.5 p-1.5">
+                        <a href="/" className="-m-1.5 p-1.5">
                             <Image
                                 className="h-8 w-auto"
                                 src="/logo.png"
@@ -92,7 +90,7 @@ export const Header = () => {
                             </div>
                             <div className="py-6">
                                 <Link href="/cart">
-                                    <div className={"-mx-3 block rounded-lg px-3 py-2.5 text-base leading-7 text-gray-900 hover:bg-gray-50 flex"}>
+                                    <div className={"-mx-3 rounded-lg px-3 py-2.5 text-base leading-7 text-gray-900 hover:bg-gray-50 flex"}>
                                         Cart <ShoppingCartIcon className="h-6 w-6 mr-2" />
                                     </div>
                                 </Link>

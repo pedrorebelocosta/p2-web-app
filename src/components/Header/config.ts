@@ -10,10 +10,5 @@ export const HEADER_CONFIG: HeaderNavigationItem[] = [
         title: "Services",
         to: "/services",
         activePattern: "/services*"
-    },
-    {
-        title: "Contact Us",
-        to: "/contactus",
-        activePattern: "/contactus*"
     }
 ]

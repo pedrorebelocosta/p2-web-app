@@ -1,9 +1,9 @@
-import { SellableCard, SellableType } from "@/components/SellableCard";
-import { SellableCardProps } from "@/components/SellableCard";
+import { SellableCard } from "@/components/SellableCard";
+import { SellableItemProps } from "@/components/SellableCard";
 
 import styles from './style.module.scss';
 
-type Product = {
+export type Product = {
     id: number;
     name: string;
     title: string;
@@ -26,7 +26,7 @@ export default async function Products() {
         ...product,
         type: 'product',
         categoryName: categories.find((c: Category) => c.id === product.categoryId).title
-    })) as SellableCardProps[];
+    })) as SellableItemProps[];
 
     return (
         <div className={styles.ProductGrid}>
