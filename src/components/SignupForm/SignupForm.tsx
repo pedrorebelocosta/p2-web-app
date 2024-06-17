@@ -38,8 +38,6 @@ export const SignupForm = () => {
         } catch (e) {
             console.error('Something wrong happened when signing up', e);
         }
-
-        console.table()
     }, [username, password, firstName, lastName, dateOfBirth, address, vatNo, setToken, router]);
 
     return (

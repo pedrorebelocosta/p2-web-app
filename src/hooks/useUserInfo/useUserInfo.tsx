@@ -12,13 +12,22 @@ export type UserData = {
     address: string;
 }
 
+export type UserBike = {
+    name: string;
+    brand: string;
+    model: string;
+    type: string;
+};
+
 export type UseUserInfoReturn = {
     userData?: UserData;
+    userBikes?: UserBike[];
 }
 
 export const useUserInfo = (): UseUserInfoReturn => {
     const { getToken, clearToken } = useUserJwt();
     const [userData, setUserData] = useState<UserData>();
+    const [userBikes, setUserBikes] = useState<UserBike[]>([]);
     const router = useRouter();
 
     const fetchUserData = useCallback(async () => {
@@ -28,8 +37,37 @@ export const useUserInfo = (): UseUserInfoReturn => {
                     'content-type': 'application/json',
                     'authorization': `Bearer ${getToken()}`
                 })
-            }).then((res) => res.json()) as UserData;
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error();
+                }
+
+                return res.json();
+            }) as UserData;
             setUserData(loggedInUser);
+        } catch (e) {
+            console.error('Something wrong happened when requesting data with token', e);
+            clearToken();
+            router.push('/user/login');
+        }
+    }, [clearToken, getToken, router]);
+
+    const fetchUserBikes = useCallback(async () => {
+        try {
+            const fetchedBikes = await fetch('http://localhost:8080/api/users/me/bikes', {
+                headers: new Headers({
+                    'content-type': 'application/json',
+                    'authorization': `Bearer ${getToken()}`
+                })
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error();
+                }
+                
+                return res.json();
+            }) as UserBike[];
+            fetchedBikes.push({ name: 'Fake Mock', brand: 'BMC', model: 'GF02', type: 'road' })
+            setUserBikes(fetchedBikes);
         } catch (e) {
             console.error('Something wrong happened when requesting data with token', e);
             clearToken();
@@ -39,7 +77,8 @@ export const useUserInfo = (): UseUserInfoReturn => {
 
     useEffect(() => {
         fetchUserData();
-    }, [fetchUserData]);
+        fetchUserBikes();
+    }, [fetchUserBikes, fetchUserData]);
 
-    return { userData }
+    return { userData, userBikes }
 }
