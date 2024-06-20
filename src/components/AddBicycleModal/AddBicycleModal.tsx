@@ -4,18 +4,24 @@ import { createPortal } from "react-dom"
 import { Modal, ModalProps } from "../Modal/Modal";
 import { UserBike } from "@/hooks/useUserInfo/useUserInfo";
 import { ChevronDownIcon, ExclamationTriangleIcon } from "@heroicons/react/16/solid";
-import { DialogTitle, Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
-import { useState } from "react";
+import { Menu, MenuButton, MenuItem, MenuItems, Transition } from "@headlessui/react";
+import { useCallback, useState } from "react";
 import classNames from "classnames";
+import { BIKE_TYPES } from "./config";
+import { DropdownItem } from "@/types/util.types";
 
 const AddBicycle = ({ open, onConfirm, onCancel }: ModalProps<UserBike>) => {
-    const [name, setName] = useState('');
-    const [brand, setBrand] = useState('');
-    const [model, setModel] = useState('');
-    const [type, setType] = useState('');
+    const [name, setName] = useState<string>('');
+    const [brand, setBrand] = useState<string>('');
+    const [model, setModel] = useState<string>('');
+    const [type, setType] = useState<DropdownItem<string, string>>();
+
+    const onSaveBicycle = useCallback(() => {
+        onConfirm({ name, brand, model, type: type!.key});
+    }, [brand, model, name, type, onConfirm]);
 
     return (
-        <Modal open={open} onConfirm={onConfirm} onCancel={onCancel}>
+        <Modal open={open} customClass={'overflow-visible'} onConfirm={onSaveBicycle} onCancel={onCancel}>
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm mb-12">
                 <div className="space-y-6">
                     <div>
@@ -52,7 +58,7 @@ const AddBicycle = ({ open, onConfirm, onCancel }: ModalProps<UserBike>) => {
                     </div>
                     <div>
                         <label htmlFor="model" className="block text-sm font-medium leading-6 text-gray-900">
-                            Name
+                            Model
                         </label>
                         <div className="mt-2">
                             <input
@@ -73,7 +79,7 @@ const AddBicycle = ({ open, onConfirm, onCancel }: ModalProps<UserBike>) => {
                             <Menu as="div" className="relative inline-block text-left w-full">
                                 <div>
                                     <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-                                        Options
+                                        { type?.value ?? 'Options' }
                                         <ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
                                     </MenuButton>
                                 </div>
@@ -88,45 +94,23 @@ const AddBicycle = ({ open, onConfirm, onCancel }: ModalProps<UserBike>) => {
                                 >
                                     <MenuItems className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                                         <div className="py-1">
-                                            <MenuItem>
-                                                {({ focus }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
+                                            {BIKE_TYPES.map(
+                                                ({ key, value }) =>
+                                                    <MenuItem key={key}>
+                                                        {({ focus }) => (
+                                                            <div
+                                                                className={classNames(
+                                                                    focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
+                                                                    'block px-4 py-2 text-sm',
+                                                                )}
+                                                                onClick={() => setType({ key, value})}
+                                                            >
+                                                                {value}
+                                                            </div>
                                                         )}
-                                                    >
-                                                        Account settings
-                                                    </a>
-                                                )}
-                                            </MenuItem>
-                                            <MenuItem>
-                                                {({ focus }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        Support
-                                                    </a>
-                                                )}
-                                            </MenuItem>
-                                            <MenuItem>
-                                                {({ focus }) => (
-                                                    <a
-                                                        href="#"
-                                                        className={classNames(
-                                                            focus ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
-                                                            'block px-4 py-2 text-sm',
-                                                        )}
-                                                    >
-                                                        License
-                                                    </a>
-                                                )}
-                                            </MenuItem>
+                                                    </MenuItem>
+                                            )
+                                            }
                                         </div>
                                     </MenuItems>
                                 </Transition>

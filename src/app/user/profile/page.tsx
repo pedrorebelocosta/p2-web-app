@@ -1,5 +1,7 @@
 import { ProfileView } from "@/views/ProfileView/ProfileView";
 
+export const dynamic = 'force-dynamic';
+
 export default function Profile() {
     return (
         <>

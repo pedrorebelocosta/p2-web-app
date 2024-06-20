@@ -2,11 +2,14 @@
 
 import { PropsWithChildren } from 'react'
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react'
+import classNames from 'classnames';
+import { CustomCssClass } from '@/types/css.types';
 
 export type ModalProps<T> = {
     open: boolean;
     confirmLabel?: string;
     cancelLabel?: string;
+    customClass?: CustomCssClass;
     onConfirm: (data?: T) => void;
     onCancel: () => void;
 }
@@ -15,6 +18,7 @@ export const Modal = <T,>({
     open,
     confirmLabel = 'Save',
     cancelLabel = 'Cancel',
+    customClass,
     onConfirm,
     onCancel,
     children
@@ -43,7 +47,7 @@ export const Modal = <T,>({
               leaveFrom="opacity-100 translate-y-0 sm:scale-100"
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
-              <DialogPanel className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
+              <DialogPanel className={classNames("relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg", customClass)}>
                 {children}
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button

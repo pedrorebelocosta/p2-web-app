@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { useUserJwt } from "../useUserJwt"
 import { useRouter } from "next/navigation";
+import { Appointment } from "@/types/system.types";
 
 export type UserData = {
     first_name: string;
@@ -22,12 +23,15 @@ export type UserBike = {
 export type UseUserInfoReturn = {
     userData?: UserData;
     userBikes?: UserBike[];
+    userAppointments?: Appointment[];
 }
 
 export const useUserInfo = (): UseUserInfoReturn => {
     const { getToken, clearToken } = useUserJwt();
     const [userData, setUserData] = useState<UserData>();
     const [userBikes, setUserBikes] = useState<UserBike[]>([]);
+    const [userAppointments, setUserAppointments] = useState<Appointment[]>([]);
+
     const router = useRouter();
 
     const fetchUserData = useCallback(async () => {
@@ -66,8 +70,29 @@ export const useUserInfo = (): UseUserInfoReturn => {
                 
                 return res.json();
             }) as UserBike[];
-            fetchedBikes.push({ name: 'Fake Mock', brand: 'BMC', model: 'GF02', type: 'road' })
             setUserBikes(fetchedBikes);
+        } catch (e) {
+            console.error('Something wrong happened when requesting data with token', e);
+            clearToken();
+            router.push('/user/login');
+        }
+    }, [clearToken, getToken, router]);
+
+    const fetchUserAppointments = useCallback(async () => {
+        try {
+            const fetchedAppointments = await fetch('http://localhost:8080/api/users/me/appointments', {
+                headers: new Headers({
+                    'content-type': 'application/json',
+                    'authorization': `Bearer ${getToken()}`
+                })
+            }).then((res) => {
+                if (!res.ok) {
+                    throw new Error();
+                }
+                
+                return res.json();
+            }) as Appointment[];
+            setUserAppointments(fetchedAppointments);
         } catch (e) {
             console.error('Something wrong happened when requesting data with token', e);
             clearToken();
@@ -78,7 +103,8 @@ export const useUserInfo = (): UseUserInfoReturn => {
     useEffect(() => {
         fetchUserData();
         fetchUserBikes();
-    }, [fetchUserBikes, fetchUserData]);
+        fetchUserAppointments();
+    }, [fetchUserAppointments, fetchUserBikes, fetchUserData]);
 
-    return { userData, userBikes }
+    return { userData, userBikes, userAppointments }
 }
