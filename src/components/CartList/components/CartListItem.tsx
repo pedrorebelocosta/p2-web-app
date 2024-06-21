@@ -40,7 +40,7 @@ export const CartListItem = ({ id, type, title, imageUrl, price, qty, href, onIt
                         <h3>
                             <a href={href}>{title}</a>
                         </h3>
-                        <p className="ml-4">{price}</p>
+                        <p className="ml-4">{price} EUR</p>
                     </div>
                 </div>
                 <div className="flex flex-1 items-end justify-between text-sm">

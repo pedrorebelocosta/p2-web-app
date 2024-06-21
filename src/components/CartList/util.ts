@@ -30,3 +30,21 @@ export const buildCartListItems = (
         return acc;
     }, []);
 }
+
+export const calculateCartTotal = (
+    cartItems: ShoppingCartItem[],
+    products: Product[],
+    services: Service[]
+) => {
+
+    if (!cartItems || !products || !services) return 0;
+    
+    return cartItems.reduce<number>(
+        (acc, cur) => {
+            const sellable: Product | Service = cur.type === SellableType.PRODUCT
+                ? products.find((product: Product) => product.id == cur.id)
+                : services.find((service: Service) => service.id == cur.id);
+
+            return acc + Number(sellable.price) * cur.qty;
+        }, 0);
+}

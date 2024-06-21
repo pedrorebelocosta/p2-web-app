@@ -6,7 +6,7 @@ import { useCallback, useState } from "react";
 import { AddBicycleModal } from "@/components/AddBicycleModal/AddBicycleModal";
 import { useUserJwt } from "@/hooks/useUserJwt";
 import { ScheduleAppointmentModal } from "@/components/ScheduleAppointmentModal/ScheduleAppointmentModal";
-import { Appointment } from "@/types/system.types";
+import { CreateAppointmentData } from "@/types/system.types";
 
 export const ProfileView = () => {
     const { userData, userBikes, userAppointments } = useUserInfo();
@@ -40,7 +40,24 @@ export const ProfileView = () => {
         setBicycleModalOpen(() => false);
     }, []);
 
-    const onSaveAppointment = useCallback((data?: Appointment) => {}, []);
+    const onSaveAppointment = useCallback(async (data?: CreateAppointmentData) => {
+        if (!data) return;
+
+        await fetch('http://localhost:8080/api/users/me/appointments', { 
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: new Headers({
+                'Content-Type': 'application/json',
+                'authorization': `Bearer ${getToken()}`
+            })
+        }).then((res) => {
+            // TODO replace with nextjs routing option (can't investigate the caching issue atm)
+            if (res.ok) {
+                window.location.reload();
+            }
+        }).finally(() => setIsScheduleAppointmentModalOpen(() => false));
+    }, [getToken]);
+
     const onScheduleAppointment = useCallback(() => setIsScheduleAppointmentModalOpen(() => true), []);
 
     return (
